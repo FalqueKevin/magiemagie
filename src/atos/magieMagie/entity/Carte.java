@@ -6,6 +6,7 @@
 package atos.magieMagie.entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,6 +34,7 @@ public class Carte implements Serializable {
         LAPIS_LAZULI,
         MANDRAGORE
     };
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private typeIngredient ingredient;
     @ManyToOne
