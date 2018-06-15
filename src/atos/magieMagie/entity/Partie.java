@@ -30,23 +30,8 @@ public class Partie implements Serializable {
     private Long id;
     @Column(nullable = false)
     private String nom;
-//    public enum etat {
-//        NON_DEMARREE,
-//        EN_COURS,
-//        TERMINEE
-//    }
-//    @Enumerated(EnumType.STRING)
-//    private etat etatPartie ;
     @OneToMany(mappedBy = "partie")
     private List<Joueur> joueurs = new ArrayList<>();
-
-//    public etat getEtatPartie() {
-//        return etatPartie;
-//    }
-//
-//    public void setEtatPartie(etat etatPartie) {
-//        this.etatPartie = etatPartie;
-//    }
 
     public List<Joueur> getJoueurs() {
         return joueurs;

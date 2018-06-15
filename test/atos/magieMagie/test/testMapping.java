@@ -33,14 +33,14 @@ public class testMapping {
         Joueur j1 = new Joueur();
         j1.setPartie(p1);
         j1.setPseudo("Pierre");
-        j1.setNbPartieGagnees(0L);
-        j1.setNbpartieJouees(0L);
+        j1.setNbPartiesGagnees(0L);
+        j1.setNbPartiesJouees(0L);
         em.persist(j1);
         Joueur j2 = new Joueur();
         j2.setPartie(p1);
         j2.setPseudo("Jean");
-        j2.setNbPartieGagnees(0L);
-        j2.setNbpartieJouees(0L);
+        j2.setNbPartiesGagnees(0L);
+        j2.setNbPartiesJouees(0L);
         em.persist(j2);
         
         Carte c1 = new Carte();

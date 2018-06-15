@@ -7,6 +7,7 @@ package atos.magieMagie.dao;
 
 import atos.magieMagie.entity.Joueur;
 import atos.magieMagie.entity.Partie;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -33,11 +34,20 @@ public class PartieDAO {
         
     }
     
-//    public Partie creerNouvellePartie(JoueurID,nomPartie){
-//        
-//        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-//        Partie p = new Partie();
-//        em.persist(p);
-//    }
+    public void ajouterNouvellePartie(Partie p){
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        em.getTransaction().begin();
+        em.persist(p);
+        em.getTransaction().commit();
+        
+    }
+
+    public Partie rechercherParID(long PartieID) {
+
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        return em.find(Partie.class, PartieID);
+
+    }
     
 }

@@ -46,27 +46,29 @@ public class Joueur implements Serializable {
     @Column(nullable = false)
     private Long nbPartiesGagnees;
     @Column(nullable = false)
-    private Long nbpartiesJouees;
+    private Long nbPartiesJouees;
     @ManyToOne
     @JoinColumn
     private Partie partie;
     @OneToMany(mappedBy = "joueur")
     private List<Carte> cartes = new ArrayList<>();
-
-    public Partie getPartie() {
-        return partie;
-    }
+    @Column(nullable = false)
+    private Long ordre;
 
     public void setPartie(Partie partie) {
         this.partie = partie;
     }
-
-    public List<Carte> getCartes() {
-        return cartes;
+    
+    public Partie getPartie() {
+        return partie;
     }
 
-    public void setCartes(List<Carte> cartes) {
-        this.cartes = cartes;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getPseudo() {
@@ -85,28 +87,44 @@ public class Joueur implements Serializable {
         this.avatar = avatar;
     }
 
-    public Long getNbPartieGagnees() {
+    public etat getEtatJoueur() {
+        return etatJoueur;
+    }
+
+    public void setEtatJoueur(etat etatJoueur) {
+        this.etatJoueur = etatJoueur;
+    }
+
+    public Long getNbPartiesGagnees() {
         return nbPartiesGagnees;
     }
 
-    public void setNbPartieGagnees(Long nbPartieGagnees) {
-        this.nbPartiesGagnees = nbPartieGagnees;
+    public void setNbPartiesGagnees(Long nbPartiesGagnees) {
+        this.nbPartiesGagnees = nbPartiesGagnees;
     }
 
-    public Long getNbpartieJouees() {
-        return nbpartiesJouees;
+    public Long getNbPartiesJouees() {
+        return nbPartiesJouees;
     }
 
-    public void setNbpartieJouees(Long nbpartieJouees) {
-        this.nbpartiesJouees = nbpartieJouees;
+    public void setNbPartiesJouees(Long nbPartiesJouees) {
+        this.nbPartiesJouees = nbPartiesJouees;
     }
 
-    public Long getId() {
-        return id;
+    public List<Carte> getCartes() {
+        return cartes;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCartes(List<Carte> cartes) {
+        this.cartes = cartes;
+    }
+
+    public Long getOrdre() {
+        return ordre;
+    }
+
+    public void setOrdre(Long ordre) {
+        this.ordre = ordre;
     }
 
     @Override

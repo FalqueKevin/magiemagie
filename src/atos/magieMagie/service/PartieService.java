@@ -7,7 +7,10 @@ package atos.magieMagie.service;
 
 import atos.magieMagie.dao.PartieDAO;
 import atos.magieMagie.entity.Partie;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 
 /**
  *
@@ -23,10 +26,19 @@ public class PartieService {
         
     }
     
-//    public Partie creerNouvellePartie(JoueurID,nomPartie){
-//        
-//        return dao.creerNouvellePartie(JoueurID,nomPartie);
-//        
-//    }
+    public Partie creerNouvellePartie(String nomPartie){
+        
+        Partie p = new Partie();
+        p.setNom(nomPartie);
+        dao.ajouterNouvellePartie(p);
+        return p;
+        
+    }
+    
+    public void demarrerPartie(Long PartieID, Long joueursID){
+        
+        
+        
+    }
     
 }
