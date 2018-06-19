@@ -5,12 +5,24 @@
  */
 package atos.magieMagie.dao;
 
+import atos.magieMagie.entity.Carte;
+import atos.magieMagie.entity.Joueur;
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+
 /**
  *
  * @author Administrateur
  */
 public class CarteDAO {
-    
-    
+
+    public void ajouter(Carte c) {
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        em.getTransaction().begin();
+        em.persist(c);
+        em.getTransaction().commit(); 
+        
+    }
     
 }

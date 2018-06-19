@@ -47,8 +47,8 @@ public class Joueur implements Serializable {
     private Long nbPartiesGagnees;
     @Column(nullable = false)
     private Long nbPartiesJouees;
-    @ManyToOne
     @JoinColumn
+    @ManyToOne
     private Partie partie;
     @OneToMany(mappedBy = "joueur")
     private List<Carte> cartes = new ArrayList<>();

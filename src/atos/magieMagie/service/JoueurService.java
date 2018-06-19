@@ -17,13 +17,13 @@ import java.util.List;
  */
 public class JoueurService {
     
-    private JoueurDAO dao = new JoueurDAO();
+    private JoueurDAO joueurDAO = new JoueurDAO();
     private PartieDAO partieDAO = new PartieDAO();
     
-    public void rejoindrePartie(String nomJoueur, String avatar, long PartieID){
+    public Joueur rejoindrePartie(String nomJoueur, String avatar, long PartieID){
         
         // Recherche si le joueur existe déjà
-        Joueur j = dao.rechercherParPseudo(nomJoueur);
+        Joueur j = joueurDAO.rechercherParPseudo(nomJoueur);
         
         if (j==null){
             //Le joueur n'existe pas encore
@@ -34,16 +34,24 @@ public class JoueurService {
         }
         j.setAvatar(avatar);
         j.setEtatJoueur(Joueur.etat.N_A_PAS_LA_MAIN);
-        j.setOrdre(dao.rechercherOrdreNouveauJoueur(PartieID));
+        j.setOrdre(joueurDAO.rechercherOrdreNouveauJoueur(PartieID));
         Partie p = partieDAO.rechercherParID(PartieID);
-        p.getJoueurs().add(j);
         j.setPartie(p);
+        p.getJoueurs().add(j);
         
         if (j.getId()==null){ //Le joueur n'existe pas encore
-            dao.ajouter(j);
+            joueurDAO.ajouter(j);
         }else { //Le joueur existe déja
-            dao.modifier(j);
+            joueurDAO.modifier(j);
         }
+        
+        return j;
+        
+    }
+    
+    public void lancerSort(){
+        
+        
         
     }
     

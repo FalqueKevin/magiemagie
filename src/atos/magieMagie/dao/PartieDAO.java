@@ -5,10 +5,11 @@
  */
 package atos.magieMagie.dao;
 
+import atos.magieMagie.entity.Carte;
 import atos.magieMagie.entity.Joueur;
 import atos.magieMagie.entity.Partie;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
@@ -18,6 +19,9 @@ import javax.persistence.Query;
  * @author Administrateur
  */
 public class PartieDAO {
+    
+    private CarteDAO carteDAO = new CarteDAO();
+    private JoueurDAO joueurDAO = new JoueurDAO();
     
     public List<Partie> listerPartieNonDemarrees(){
         
@@ -43,11 +47,42 @@ public class PartieDAO {
         
     }
 
-    public Partie rechercherParID(long PartieID) {
+    public Partie rechercherParID(long partieID) {
 
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        return em.find(Partie.class, PartieID);
+        return em.find(Partie.class, partieID);
 
+    }
+
+    public List<Joueur> rechercherJoueursParID(Long partieID) {
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("SELECT p.joueurs FROM Partie p WHERE p.id =:ID");
+        query.setParameter("ID", partieID);
+        return query.getResultList();
+        
+    }
+
+    public void distribuerUneCarteAleatoire(Joueur j) {
+        
+        Carte c = new Carte();
+        Carte.typeIngredient[] tabTypeIngredients = Carte.typeIngredient.values();
+        Random r = new Random();
+        int n = r.nextInt(tabTypeIngredients.length);
+        c.setIngredient(tabTypeIngredients[n]);
+        j.getCartes().add(c);
+        c.setJoueur(j);
+        carteDAO.ajouter(c);   
+    
+    }
+
+    public Long rechercherTailleListeJoueursParID(Long partieID) {
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("SELECT COUNT(p.joueurs) FROM Partie p WHERE p.id =:idPartie");
+        query.setParameter("idPartie", partieID);
+        return (Long)query.getSingleResult();
+        
     }
     
 }

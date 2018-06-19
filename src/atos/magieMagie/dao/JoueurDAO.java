@@ -49,7 +49,7 @@ public class JoueurDAO {
         query.setParameter("IDP", PartieID);
         if (query.getSingleResult()==null)
             return 1L;
-        return (Long)query.getSingleResult()+1;
+        return (Long)query.getSingleResult()+1L;
     }
 
     public void ajouter(Joueur j) {
@@ -68,6 +68,25 @@ public class JoueurDAO {
         em.merge(j);
         em.getTransaction().commit();
         
+    }
+
+    public Joueur rechercherParID(Long joueurID) {
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        return em.find(Joueur.class, joueurID);
+    }
+
+    public Joueur rechercherJoueurSuivant(Long partieID, Long ordreJoueurActuel) {
+        
+        try{
+            EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+            Query query = em.createQuery("SELECT j FROM Joueur j JOIN Partie p WHERE j.ordre =:ordre AND p.id =:ID");
+            query.setParameter("ordre", ordreJoueurActuel + 1L);
+            query.setParameter("ID", partieID);
+            Joueur j = (Joueur)query.getSingleResult();
+            return j;
+        }catch (Exception e){
+            return rechercherJoueurSuivant(partieID, 0L);
+        }    
     }
     
 }

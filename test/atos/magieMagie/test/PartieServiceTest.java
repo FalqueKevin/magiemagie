@@ -5,7 +5,10 @@
  */
 package atos.magieMagie.test;
 
+import atos.magieMagie.dao.PartieDAO;
+import atos.magieMagie.entity.Joueur;
 import atos.magieMagie.entity.Partie;
+import atos.magieMagie.service.JoueurService;
 import atos.magieMagie.service.PartieService;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -15,15 +18,34 @@ import static org.junit.Assert.*;
  * @author Administrateur
  */
 public class PartieServiceTest {
-    
-    private PartieService service = new PartieService();
+
+    private PartieService partieService = new PartieService();
+    private JoueurService joueurService = new JoueurService();
     
     @Test
-    public void creerNouvellePartieOK(){
+    public void passerTourOK(){
         
-        Partie p = service.creerNouvellePartie("Partie1");
-        assertNotNull(p.getId());
-        
+        partieService.passerTour(1L, 2L);
+
     }
     
+    @Test
+    public void demarrerPartieOK() {
+
+        long id = partieService.creerNouvellePartie("Partie 1").getId();
+
+        joueurService.rejoindrePartie("Kevin", "image", id);
+        joueurService.rejoindrePartie("Rival", "image", id);
+        partieService.demarrerPartie(id);
+
+    }
+
+//    @Test
+    public void creerNouvellePartieOK() {
+
+        Partie p = partieService.creerNouvellePartie("Partie1");
+        assertNotNull(p.getId());
+
+    }
+
 }
