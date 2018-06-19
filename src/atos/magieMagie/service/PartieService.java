@@ -81,7 +81,9 @@ public class PartieService {
                 nbDeJoueurEncoreVivants++;
             }
         }
-        if (nbDeJoueurEncoreVivants > 1){
+        if (nbDeJoueurEncoreVivants == 1){
+            j.setEtatJoueur(Joueur.etat.GAGNANT);
+        }else if (nbDeJoueurEncoreVivants > 1){
             j.setEtatJoueur(Joueur.etat.N_A_PAS_LA_MAIN);
             joueurDAO.modifier(j);
             Joueur joueurSuivant = joueurDAO.rechercherJoueurSuivant(partieID, j.getOrdre());
@@ -93,10 +95,8 @@ public class PartieService {
                 joueurSuivant = joueurDAO.rechercherJoueurSuivant(partieID, joueurSuivant.getOrdre());
             } 
             joueurSuivant.setEtatJoueur(Joueur.etat.A_LA_MAIN);
-            joueurDAO.modifier(joueurSuivant);    
-        }else if (nbDeJoueurEncoreVivants == 1){
-            j.setEtatJoueur(Joueur.etat.GAGNANT);
-        }
+            joueurDAO.modifier(joueurSuivant);
+        }    
     }
     
 }
