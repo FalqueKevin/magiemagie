@@ -83,6 +83,7 @@ public class PartieService {
         }
         if (nbDeJoueurEncoreVivants == 1){
             j.setEtatJoueur(Joueur.etat.GAGNANT);
+            joueurDAO.modifier(j);
         }else if (nbDeJoueurEncoreVivants > 1){
             j.setEtatJoueur(Joueur.etat.N_A_PAS_LA_MAIN);
             joueurDAO.modifier(j);
