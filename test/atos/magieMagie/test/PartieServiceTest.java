@@ -25,17 +25,20 @@ public class PartieServiceTest {
     @Test
     public void passerTourOK(){
         
-        partieService.passerTour(1L, 2L);
+        partieService.passerTour(1L, 4L);
 
     }
     
-    @Test
+    //@Test
     public void demarrerPartieOK() {
 
         long id = partieService.creerNouvellePartie("Partie 1").getId();
 
         joueurService.rejoindrePartie("Kevin", "image", id);
-        joueurService.rejoindrePartie("Rival", "image", id);
+        joueurService.rejoindrePartie("Pierre", "image", id);
+        joueurService.rejoindrePartie("Paul", "image", id);
+        joueurService.rejoindrePartie("Jacques", "image", id);
+        
         partieService.demarrerPartie(id);
 
     }

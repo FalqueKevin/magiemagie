@@ -68,36 +68,47 @@ public class PartieService {
         
         Joueur j = joueurDAO.rechercherParID(joueurID);
         partieDAO.distribuerUneCarteAleatoire(j);
-        this.passerLaMainAuJoueurSuivant(partieID, j);
+        this.passerLaMainAuJoueurSuivant(partieID);
         
     }
     
-    public void passerLaMainAuJoueurSuivant(Long partieID, Joueur j) {
+    public void passerLaMainAuJoueurSuivant(Long partieID) {
             
-        List<Joueur> joueurs = partieDAO.rechercherJoueursParID(partieID);
-        int nbDeJoueurEncoreVivants = 0;
-        for (Joueur joueur : joueurs){
-            if (joueur.getEtatJoueur() != Joueur.etat.PERDU && joueur.getEtatJoueur() != Joueur.etat.GAGNANT){
-                nbDeJoueurEncoreVivants++;
-            }
-        }
+        int nbDeJoueurEncoreVivants = this.chercherNombreDeJoueurVivant(partieID);
+        Joueur j = partieDAO.rechercheJoueurQuiALaMainParPartieID(partieID);
         if (nbDeJoueurEncoreVivants == 1){
             j.setEtatJoueur(Joueur.etat.GAGNANT);
             joueurDAO.modifier(j);
-        }else if (nbDeJoueurEncoreVivants > 1){
-            j.setEtatJoueur(Joueur.etat.N_A_PAS_LA_MAIN);
-            joueurDAO.modifier(j);
-            Joueur joueurSuivant = joueurDAO.rechercherJoueurSuivant(partieID, j.getOrdre());
+            return;
+        }
+        j.setEtatJoueur(Joueur.etat.N_A_PAS_LA_MAIN);
+        joueurDAO.modifier(j);
+        Joueur joueurSuivant = joueurDAO.rechercherJoueurSuivant(partieID, j.getOrdre());
+        while (joueurSuivant.getEtatJoueur() != Joueur.etat.N_A_PAS_LA_MAIN){
             if (joueurSuivant.getEtatJoueur() == Joueur.etat.SOMMEIL_PROFOND){
                 joueurSuivant.setEtatJoueur(Joueur.etat.N_A_PAS_LA_MAIN);
                 joueurDAO.modifier(joueurSuivant);
                 joueurSuivant = joueurDAO.rechercherJoueurSuivant(partieID, joueurSuivant.getOrdre());
-            }else if (j.getEtatJoueur() == Joueur.etat.PERDU){
+            }
+            else if (joueurSuivant.getEtatJoueur() == Joueur.etat.PERDU){
                 joueurSuivant = joueurDAO.rechercherJoueurSuivant(partieID, joueurSuivant.getOrdre());
-            } 
-            joueurSuivant.setEtatJoueur(Joueur.etat.A_LA_MAIN);
-            joueurDAO.modifier(joueurSuivant);
-        }    
+            }
+        }
+        joueurSuivant.setEtatJoueur(Joueur.etat.A_LA_MAIN);
+        joueurDAO.modifier(joueurSuivant);
+    }
+
+    private int chercherNombreDeJoueurVivant(Long partieID) {
+        
+        List<Joueur> joueurs = partieDAO.rechercherJoueursParID(partieID);
+        int nbDeJoueurEncoreVivants = 0;
+        for (Joueur joueur : joueurs){
+            if (joueur.getEtatJoueur() != Joueur.etat.PERDU){
+                nbDeJoueurEncoreVivants++;
+            }
+        }
+        return nbDeJoueurEncoreVivants;
+        
     }
     
 }
