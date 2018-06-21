@@ -5,6 +5,7 @@
  */
 package atos.magieMagie.dao;
 
+import atos.magieMagie.entity.Carte;
 import atos.magieMagie.entity.Joueur;
 import atos.magieMagie.entity.Partie;
 import java.util.List;
@@ -39,14 +40,11 @@ public class JoueurDAO {
         
     }
     
-    public Long rechercherOrdreNouveauJoueur(long PartieID){
+    public Long rechercherOrdreNouveauJoueur(Long partieID){
         
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Query query = em.createQuery("SELECT MAX(j.ordre) "
-                + "                     FROM Joueur j "
-                + "                         JOIN j.partie p"
-                + "                     WHERE p.id =:IDP");
-        query.setParameter("IDP", PartieID);
+        Query query = em.createQuery("SELECT MAX(j.ordre) FROM Joueur j JOIN j.partie p WHERE p.id =:IDP");
+        query.setParameter("IDP", partieID);
         if (query.getSingleResult()==null)
             return 1L;
         return (Long)query.getSingleResult()+1L;
@@ -87,6 +85,25 @@ public class JoueurDAO {
         }catch (Exception e){
             return rechercherJoueurSuivant(partieID, 0L);
         }    
+    }
+
+    public List<Carte> listerCartesJoueurs(Long idJoueur) {
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+            Query query = em.createQuery("SELECT c FROM Carte c JOIN c.joueur j WHERE j.id =:ID");
+            query.setParameter("ID", idJoueur);
+            List<Carte> cartes = query.getResultList();
+            return cartes;
+        
+    }
+    
+    public Long listerNbCartesParJoueurs(Long idJoueur) {
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("SELECT COUNT(c) FROM Carte c JOIN c.joueur j WHERE j.id =:ID");
+        query.setParameter("ID", idJoueur);
+        return (Long)query.getSingleResult();
+            
     }
     
 }

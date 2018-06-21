@@ -9,6 +9,7 @@ import atos.magieMagie.entity.Carte;
 import atos.magieMagie.entity.Joueur;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 /**
  *
@@ -22,6 +23,31 @@ public class CarteDAO {
         em.getTransaction().begin();
         em.persist(c);
         em.getTransaction().commit(); 
+        
+    }
+
+    public void supprimer(Carte c) {
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        em.getTransaction().begin();
+        em.remove(c);
+        em.getTransaction().commit(); 
+        
+    }
+
+    public void modifier(Carte c) {
+
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        em.getTransaction().begin();
+        em.merge(c);
+        em.getTransaction().commit();
+
+    }
+
+    public Carte rechercherUneCarteParID(Long carteID) {
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        return em.find(Carte.class, carteID);
         
     }
     

@@ -44,9 +44,7 @@ public class PartieService {
     }
     
     public void demarrerPartie(Long partieID){
-        
-        Partie p = partieDAO.rechercherParID(partieID);
-        
+                
         Long tailleListeJoueurs = partieDAO.rechercherTailleListeJoueursParID(partieID);
         if ( tailleListeJoueurs < 2L){  
             throw new RuntimeException("Il faut au moins 2 joueurs dans la partie");
@@ -98,7 +96,7 @@ public class PartieService {
         joueurDAO.modifier(joueurSuivant);
     }
 
-    private int chercherNombreDeJoueurVivant(Long partieID) {
+    public int chercherNombreDeJoueurVivant(Long partieID) {
         
         List<Joueur> joueurs = partieDAO.rechercherJoueursParID(partieID);
         int nbDeJoueurEncoreVivants = 0;
@@ -109,6 +107,31 @@ public class PartieService {
         }
         return nbDeJoueurEncoreVivants;
         
+    }
+    
+    public List<Joueur> rechercherJoueursParID(Long partieID){
+        
+        return partieDAO.rechercherJoueursParID(partieID);
+        
+    }
+
+    public Joueur aQuiLeTour(Long idPartie) {
+        
+        List<Joueur> joueurs = partieDAO.rechercherJoueursParID(idPartie);
+        Joueur joueur = new Joueur();
+        for(Joueur j : joueurs){
+            if (j.getEtatJoueur() == Joueur.etat.A_LA_MAIN ){
+                joueur = j;
+            }   
+        }
+        return joueur;
+        
+    }
+
+    public String rechercherParID(Long idPartie) {
+
+        return partieDAO.rechercherParID(idPartie).getNom();
+
     }
     
 }
