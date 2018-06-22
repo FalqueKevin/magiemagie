@@ -128,7 +128,7 @@ public class PartieService {
         
     }
 
-    public String rechercherParID(Long idPartie) {
+    public String rechercherNomParID(Long idPartie) {
 
         return partieDAO.rechercherParID(idPartie).getNom();
 

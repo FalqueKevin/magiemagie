@@ -7,6 +7,7 @@ package atos.magieMagie.dao;
 
 import atos.magieMagie.entity.Carte;
 import atos.magieMagie.entity.Joueur;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
@@ -30,7 +31,7 @@ public class CarteDAO {
         
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
         em.getTransaction().begin();
-        em.remove(c);
+        em.remove(em.find(Carte.class, c.getId()));
         em.getTransaction().commit(); 
         
     }
@@ -48,6 +49,15 @@ public class CarteDAO {
         
         EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
         return em.find(Carte.class, carteID);
+        
+    }
+
+    public List<Carte> rechercherCartesParID(Long id) {
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("SELECT j.cartes FROM Joueur j WHERE j.id =:ID");
+        query.setParameter("ID", id);
+        return query.getResultList();
         
     }
     

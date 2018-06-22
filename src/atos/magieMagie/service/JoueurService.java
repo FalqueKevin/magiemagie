@@ -55,35 +55,15 @@ public class JoueurService {
     }
     
     
-    public void lancerSort(Long idPartie, Long idJoueurLanceur, Long carteDonnee, Long idJoueurVictime, Long ingredient1, Long ingredient2){
+    public void detruireCartesUtiliseesPourSort(Long idPartie, Long ingredient1, Long ingredient2){
         
         Carte carteIngredient1 = carteDAO.rechercherUneCarteParID(ingredient1);
         Carte carteIngredient2 = carteDAO.rechercherUneCarteParID(ingredient2);
-        String combinaisonDesCartes = (carteIngredient1.getIngredient().toString() + carteIngredient2.getIngredient().toString());
-        switch (combinaisonDesCartes){
-            case "LAPIS_LAZULIAILE_CHAUVE_SOURIS":
-                this.sortDivination(idPartie);
-                break;
-            case "MANDRAGOREAILE_CHAUVE_SOURIS":
-                this.sortSommeilProfond(idJoueurVictime);
-                break;
-            case "CORNE_LICORNEMANDRAGORE":
-                this.sortFiltreAmour(idPartie, idJoueurLanceur, idJoueurVictime);
-                break;
-            case "CORNE_LICORNEBAVE_CRAPAUD":
-                this.sortInvisibilité(idPartie, idJoueurLanceur);
-                break;
-            case "BAVE_CRAPAUDLAPIS_LAZULI":
-                this.sortHypnose(idPartie, carteDonnee, idJoueurLanceur, idJoueurVictime);
-                break;
-            default:
-                break;
-        }
         carteDAO.supprimer(carteIngredient1);
         carteDAO.supprimer(carteIngredient2);
         List<Joueur> joueurs = partieDAO.rechercherParID(idPartie).getJoueurs();
         for(Joueur j : joueurs){
-            if (j.getCartes().size()==0){
+            if (joueurDAO.listerNbCartesParJoueurs(j.getId())==0L){
                 j.setEtatJoueur(Joueur.etat.PERDU);
                 joueurDAO.modifier(j);
             }
@@ -119,7 +99,7 @@ public class JoueurService {
         }
         int nbCartesVolees = cartesDuJoueurVictime.size() / 2;
         for(int i = 0; i < nbCartesVolees; i++){
-            this.volerUneCarteAuHasard(joueurLanceur, joueurVictime);
+            this.volerUneCarteAuHasard(joueurLanceur.getId(), joueurVictime.getId());
         }
         
     }
@@ -129,43 +109,46 @@ public class JoueurService {
         Joueur joueurLanceur = joueurDAO.rechercherParID(idJoueurLanceur);
         List<Joueur> joueurs = partieDAO.rechercherParID(idPartie).getJoueurs();
         for(Joueur joueurVictime : joueurs){
-            this.volerUneCarteAuHasard(joueurLanceur, joueurVictime);
+            this.volerUneCarteAuHasard(joueurLanceur.getId(), joueurVictime.getId());
         }
         
     }
 
-    public void sortHypnose(Long idPartie, Long IDcarteDonnee, Long idJoueurLanceur, Long idJoueurVictime) {
+    public void sortHypnose(Long idPartie, Long IDcarteDonnee, Long IDjoueurLanceur, Long IDjoueurVictime) {
 
-        Joueur joueurLanceur = joueurDAO.rechercherParID(idJoueurLanceur);
-        Joueur JoueurVictime = joueurDAO.rechercherParID(idJoueurVictime);
-        List<Carte> cartesDuJoueurVictime = joueurDAO.listerCartesJoueurs(idJoueurVictime);
+        Joueur joueurLanceur = joueurDAO.rechercherParID(IDjoueurLanceur);
+        Joueur JoueurVictime = joueurDAO.rechercherParID(IDjoueurVictime);
+        List<Carte> cartesDuJoueurVictime = joueurDAO.listerCartesJoueurs(IDjoueurVictime);
         for(int i = 0; i < 3; i++){
-            this.volerUneCarteAuHasard(joueurLanceur, JoueurVictime);
+            this.volerUneCarteAuHasard(joueurLanceur.getId(), JoueurVictime.getId());
             if (cartesDuJoueurVictime.size()==0){
                 return;
             }
         }
-        Carte carteDonnee = carteDAO.rechercherUneCarteParID(IDcarteDonnee);
-        this.donnerUneCarteDeSonChoix(carteDonnee, JoueurVictime);
+        this.donnerUneCarteDeSonChoix(IDcarteDonnee, IDjoueurVictime);
 
     }
 
-    private void volerUneCarteAuHasard(Joueur joueurLanceur, Joueur joueurVictime) {
-
+    private void volerUneCarteAuHasard(Long IDjoueurLanceur, Long IDjoueurVictime) {
+        
+        Joueur joueurLanceur = joueurDAO.rechercherParID(IDjoueurLanceur);
+        Joueur joueurVictime = joueurDAO.rechercherParID(IDjoueurVictime);     
         Carte c = new Carte();
         Random r = new Random();
-        int n = r.nextInt(joueurVictime.getCartes().size());
-        c = (joueurVictime.getCartes().get(n));
+        int n = r.nextInt(joueurDAO.listerNbCartesParJoueurs(joueurVictime.getId()).intValue());
+        c = (joueurDAO.listerCartesJoueurs(IDjoueurVictime).get(n));
         c.setJoueur(joueurLanceur);
-        joueurLanceur.getCartes().add(c);
+        joueurDAO.listerCartesJoueurs(IDjoueurLanceur).add(c);
         carteDAO.modifier(c);
         
     }
 
-    private void donnerUneCarteDeSonChoix(Carte carteDonnee, Joueur JoueurVictime) {
-
-        carteDonnee.setJoueur(JoueurVictime);
-        JoueurVictime.getCartes().add(carteDonnee);
+    private void donnerUneCarteDeSonChoix(Long IDcarteDonnee, Long IDjoueurVictime) {
+        
+        Carte carteDonnee = carteDAO.rechercherUneCarteParID(IDcarteDonnee);
+        Joueur joueurVictime = joueurDAO.rechercherParID(IDjoueurVictime);
+        carteDonnee.setJoueur(joueurVictime);
+        joueurVictime.getCartes().add(carteDonnee);
         carteDAO.modifier(carteDonnee);
 
     }
