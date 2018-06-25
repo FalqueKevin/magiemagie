@@ -92,7 +92,7 @@ public class JoueurService {
         Joueur joueurVictime = joueurDAO.rechercherParID(idJoueurVictime);
         List<Carte> cartesDuJoueurVictime = joueurDAO.listerCartesJoueurs(idJoueurVictime);
         if (cartesDuJoueurVictime.size()==1){
-            joueurVictime.getCartes().clear();
+            joueurVictime.setEtatJoueur(Joueur.etat.PERDU);
             joueurDAO.modifier(joueurVictime);
             carteDAO.supprimer(cartesDuJoueurVictime.get(0));
             return;
@@ -120,16 +120,15 @@ public class JoueurService {
         Joueur JoueurVictime = joueurDAO.rechercherParID(IDjoueurVictime);
         List<Carte> cartesDuJoueurVictime = joueurDAO.listerCartesJoueurs(IDjoueurVictime);
         for(int i = 0; i < 3; i++){
-            this.volerUneCarteAuHasard(joueurLanceur.getId(), JoueurVictime.getId());
-            if (cartesDuJoueurVictime.size()==0){
-                return;
+            if (cartesDuJoueurVictime.size()!=0){
+                this.volerUneCarteAuHasard(joueurLanceur.getId(), JoueurVictime.getId());
             }
         }
         this.donnerUneCarteDeSonChoix(IDcarteDonnee, IDjoueurVictime);
 
     }
 
-    private void volerUneCarteAuHasard(Long IDjoueurLanceur, Long IDjoueurVictime) {
+    public void volerUneCarteAuHasard(Long IDjoueurLanceur, Long IDjoueurVictime) {
         
         Joueur joueurLanceur = joueurDAO.rechercherParID(IDjoueurLanceur);
         Joueur joueurVictime = joueurDAO.rechercherParID(IDjoueurVictime);     
@@ -143,7 +142,7 @@ public class JoueurService {
         
     }
 
-    private void donnerUneCarteDeSonChoix(Long IDcarteDonnee, Long IDjoueurVictime) {
+    public void donnerUneCarteDeSonChoix(Long IDcarteDonnee, Long IDjoueurVictime) {
         
         Carte carteDonnee = carteDAO.rechercherUneCarteParID(IDcarteDonnee);
         Joueur joueurVictime = joueurDAO.rechercherParID(IDjoueurVictime);
