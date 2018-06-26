@@ -56,7 +56,7 @@ public class PartieService {
                 j.setEtatJoueur(Joueur.etat.A_LA_MAIN);
                 joueurDAO.modifier(j);
             }
-            for(int i = 0; i < 70; i++){
+            for(int i = 0; i < 14; i++){
                 partieDAO.distribuerUneCarteAleatoire(j);
             }
         }
@@ -71,17 +71,16 @@ public class PartieService {
         
     }
     
-    public Joueur passerLaMainAuJoueurSuivant(Long partieID, Long joueurActuel) {
+    public String passerLaMainAuJoueurSuivant(Long partieID, Long joueurActuel) {
         
-        int nbDeJoueurEncoreVivants = this.chercherNombreDeJoueurVivant(partieID);
+        if (partieDAO.rechercheJoueurGagnant(partieID) != null){
+            return partieDAO.rechercheJoueurGagnant(partieID);
+        }
         Joueur j = joueurDAO.rechercherParID(joueurActuel);
-            if (nbDeJoueurEncoreVivants == 1){
-                j.setEtatJoueur(Joueur.etat.GAGNANT);
-                joueurDAO.modifier(j);
-                return j;
-            }
-        j.setEtatJoueur(Joueur.etat.N_A_PAS_LA_MAIN);
-        joueurDAO.modifier(j);
+        if (j.getEtatJoueur() != Joueur.etat.PERDU){
+            j.setEtatJoueur(Joueur.etat.N_A_PAS_LA_MAIN);
+            joueurDAO.modifier(j);
+        }
         Joueur joueurSuivant = joueurDAO.rechercherJoueurSuivant(partieID, j.getOrdre());
         while (joueurSuivant.getEtatJoueur() != Joueur.etat.N_A_PAS_LA_MAIN){
             if (joueurSuivant.getEtatJoueur() == Joueur.etat.SOMMEIL_PROFOND){
@@ -99,31 +98,12 @@ public class PartieService {
         joueurDAO.modifier(joueurSuivant);
         return null;
     }
-
-    public int chercherNombreDeJoueurVivant(Long partieID) {
-        
-        List<Joueur> joueurs = partieDAO.rechercherJoueursParID(partieID);
-        int nbDeJoueurEncoreVivants = 0;
-        for (Joueur joueur : joueurs){
-            if (joueur.getEtatJoueur() != Joueur.etat.PERDU){
-                nbDeJoueurEncoreVivants++;
-            }
-        }
-        return nbDeJoueurEncoreVivants;
-        
-    }
     
     public List<Joueur> rechercherJoueursParID(Long partieID){
         
         return partieDAO.rechercherJoueursParID(partieID);
         
     }
-
-//    public Joueur aQuiLeTour(Long idPartie) {
-//        
-//        return partieDAO.rechercheJoueurQuiALaMainParPartieID(idPartie);
-//        
-//    }
 
     public String rechercherNomParID(Long idPartie) {
 

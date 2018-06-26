@@ -61,10 +61,11 @@ public class JoueurService {
         Carte carteIngredient2 = carteDAO.rechercherUneCarteParID(ingredient2);
         carteDAO.supprimer(carteIngredient1);
         carteDAO.supprimer(carteIngredient2);
-        List<Joueur> joueurs = partieDAO.rechercherParID(idPartie).getJoueurs();
+        List<Joueur> joueurs = partieDAO.rechercherJoueursParID(idPartie);
         for(Joueur j : joueurs){
-            if (joueurDAO.listerNbCartesParJoueurs(j.getId())==0L){
+            if (j.getCartes().size()==0){
                 j.setEtatJoueur(Joueur.etat.PERDU);
+                j.setNbPartiesJouees(j.getNbPartiesJouees()+1);
                 joueurDAO.modifier(j);
             }
         }
@@ -90,16 +91,19 @@ public class JoueurService {
         
         Joueur joueurLanceur = joueurDAO.rechercherParID(idJoueurLanceur);
         Joueur joueurVictime = joueurDAO.rechercherParID(idJoueurVictime);
-        List<Carte> cartesDuJoueurVictime = joueurDAO.listerCartesJoueurs(idJoueurVictime);
+        List<Carte> cartesDuJoueurVictime = joueurVictime.getCartes();
         if (cartesDuJoueurVictime.size()==1){
             joueurVictime.setEtatJoueur(Joueur.etat.PERDU);
+            joueurVictime.setNbPartiesJouees(joueurVictime.getNbPartiesJouees()+1);
             joueurDAO.modifier(joueurVictime);
             carteDAO.supprimer(cartesDuJoueurVictime.get(0));
             return;
         }
-        int nbCartesVolees = cartesDuJoueurVictime.size() / 2;
-        for(int i = 0; i < nbCartesVolees; i++){
-            this.volerUneCarteAuHasard(joueurLanceur.getId(), joueurVictime.getId());
+        if(joueurVictime.getCartes().size()>0){
+            int nbCartesVolees = cartesDuJoueurVictime.size() / 2;
+            for(int i = 0; i < nbCartesVolees; i++){
+                this.volerUneCarteAuHasard(joueurLanceur.getId(), joueurVictime.getId());
+            }
         }
         
     }
@@ -109,7 +113,9 @@ public class JoueurService {
         Joueur joueurLanceur = joueurDAO.rechercherParID(idJoueurLanceur);
         List<Joueur> joueurs = partieDAO.rechercherParID(idPartie).getJoueurs();
         for(Joueur joueurVictime : joueurs){
-            this.volerUneCarteAuHasard(joueurLanceur.getId(), joueurVictime.getId());
+            if (joueurVictime.getCartes().size()>0){
+                this.volerUneCarteAuHasard(joueurLanceur.getId(), joueurVictime.getId());
+            }
         }
         
     }
@@ -117,11 +123,11 @@ public class JoueurService {
     public void sortHypnose(Long idPartie, Long IDcarteDonnee, Long IDjoueurLanceur, Long IDjoueurVictime) {
 
         Joueur joueurLanceur = joueurDAO.rechercherParID(IDjoueurLanceur);
-        Joueur JoueurVictime = joueurDAO.rechercherParID(IDjoueurVictime);
-        List<Carte> cartesDuJoueurVictime = joueurDAO.listerCartesJoueurs(IDjoueurVictime);
+        Joueur joueurVictime = joueurDAO.rechercherParID(IDjoueurVictime);
+        List<Carte> cartesDuJoueurVictime = joueurVictime.getCartes();
         for(int i = 0; i < 3; i++){
-            if (cartesDuJoueurVictime.size()!=0){
-                this.volerUneCarteAuHasard(joueurLanceur.getId(), JoueurVictime.getId());
+            if (cartesDuJoueurVictime.size()>0){
+                this.volerUneCarteAuHasard(joueurLanceur.getId(), joueurVictime.getId());
             }
         }
         this.donnerUneCarteDeSonChoix(IDcarteDonnee, IDjoueurVictime);
@@ -134,10 +140,10 @@ public class JoueurService {
         Joueur joueurVictime = joueurDAO.rechercherParID(IDjoueurVictime);     
         Carte c = new Carte();
         Random r = new Random();
-        int n = r.nextInt(joueurDAO.listerNbCartesParJoueurs(joueurVictime.getId()).intValue());
-        c = (joueurDAO.listerCartesJoueurs(IDjoueurVictime).get(n));
+        int n = r.nextInt(joueurVictime.getCartes().size());
+        c = (joueurVictime.getCartes().get(n));
         c.setJoueur(joueurLanceur);
-        joueurDAO.listerCartesJoueurs(IDjoueurLanceur).add(c);
+        joueurVictime.getCartes().add(c);
         carteDAO.modifier(c);
         
     }

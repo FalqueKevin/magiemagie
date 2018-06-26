@@ -31,6 +31,10 @@ public class Main {
     private void menuInGame(Long idPartie, Long idJoueur) throws InterruptedException {
         
         while (true){
+            if (partieDAO.rechercheJoueurQuiALaMainParPartieID(idPartie) == null){
+                System.out.println("Fin de la partie, le joueur " + partieDAO.rechercheJoueurGagnant(idPartie) + " à gagné !");
+                menuPrincipal();
+            }
             Joueur joueurActuel = partieDAO.rechercheJoueurQuiALaMainParPartieID(idPartie);
             if (idJoueur == joueurActuel.getId()){
                 String choix = new String();
@@ -51,7 +55,7 @@ public class Main {
                 List<Joueur> adversaires = partieService.rechercherJoueursParID(idPartie);
                 for(Joueur ad : adversaires){
                     if (ad.getId() != joueurActuel.getId()){
-                        System.out.println(" - (" + ad.getEtatJoueur() + ") " + ad.getPseudo() + " : " + joueurDAO.listerNbCartesParJoueurs(ad.getId()) + " cartes");
+                        System.out.println(" - (" + ad.getEtatJoueur() + ") " + ad.getPseudo() + " : " + ad.getCartes().size() + " cartes");
                     }
                 }
                 System.out.println("********************************************");
@@ -100,9 +104,6 @@ public class Main {
                                 System.out.println("Entrer l'ID d'une de vos carte pour la donnée à la victime");
                                 Scanner s4 = new Scanner(System.in);
                                 Long idCarteDefossee = Long.valueOf(s4.nextLong());
-                                while (idCarteDefossee == id1 || idCarteDefossee == id2){
-                                    System.out.println("N'entrer pas l'ID d'une des 2 cartes utilisées pour le sort");
-                                }
                                 joueurService.sortHypnose(idPartie, idCarteDefossee, joueurActuel.getId(), joueurDAO.rechercherParPseudo(pseudoJoueurVictimeHypnose).getId());
                                 break;
                             default:
@@ -110,7 +111,11 @@ public class Main {
                         }
                         joueurService.detruireCartesUtiliseesPourSort(idPartie, carteIngredient1.getId(), carteIngredient2.getId());
                         if (partieService.passerLaMainAuJoueurSuivant(idPartie, joueurActuel.getId()) != null){
-                            System.out.println("Fin de la partie, le joueur " + joueurActuel.getPseudo() + " à gagné !");
+                            joueurActuel.setEtatJoueur(Joueur.etat.GAGNANT);
+                            joueurActuel.setNbPartiesJouees(joueurActuel.getNbPartiesJouees()+1);
+                            joueurActuel.setNbPartiesGagnees(joueurActuel.getNbPartiesGagnees()+1);
+                            joueurDAO.modifier(joueurActuel);
+                            System.out.println("Fin de la partie, le joueur " +joueurActuel.getPseudo() + " à gagné !");
                             menuPrincipal();
                         }
                         break;

@@ -86,24 +86,5 @@ public class JoueurDAO {
             return rechercherJoueurSuivant(partieID, 0L);
         }    
     }
-
-    public List<Carte> listerCartesJoueurs(Long idJoueur) {
-        
-        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-            Query query = em.createQuery("SELECT c FROM Carte c JOIN c.joueur j WHERE j.id =:ID");
-            query.setParameter("ID", idJoueur);
-            List<Carte> cartes = query.getResultList();
-            return cartes;
-        
-    }
-    
-    public Long listerNbCartesParJoueurs(Long idJoueur) {
-        
-        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
-        Query query = em.createQuery("SELECT COUNT(c) FROM Carte c JOIN c.joueur j WHERE j.id =:ID");
-        query.setParameter("ID", idJoueur);
-        return (Long)query.getSingleResult();
-            
-    }
     
 }

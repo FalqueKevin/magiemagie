@@ -89,5 +89,19 @@ public class PartieDAO {
         return (Joueur)query.getSingleResult();
         
     }
+
+    public String rechercheJoueurGagnant(Long idPartie) {
+        
+        EntityManager em = Persistence.createEntityManagerFactory("PU").createEntityManager();
+        Query query = em.createQuery("SELECT j.pseudo FROM Joueur j JOIN j.partie p WHERE p.id =:idPartie AND j.etatJoueur =:etat");
+        query.setParameter("idPartie", idPartie);
+        query.setParameter("etat", Joueur.etat.GAGNANT);
+        List<Joueur> joueurGagnant = query.getResultList();
+        
+        if (joueurGagnant.isEmpty())
+            return null;
+        return joueurGagnant.get(0).toString(); 
+    
+    }
     
 }
